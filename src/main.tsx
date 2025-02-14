@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
+import AuthGuard from "./components/AuthGuard";
 import Landing from "./pages/landing/Landing";
 import Login from "./pages/login/Login";
 
@@ -13,17 +14,19 @@ export const routes = [
     children: [
       {
         path: "/",
-        element: <Landing />,
+        element: (
+          <AuthGuard requiredAuth={true}>
+            <Landing />
+          </AuthGuard>
+        ),
       },
-    ],
-  },
-  {
-    path: "/",
-    element: <App />,
-    children: [
       {
         path: "/login",
-        element: <Login />,
+        element: (
+          <AuthGuard requiredAuth={false}>
+            <Login />
+          </AuthGuard>
+        ),
       },
     ],
   },

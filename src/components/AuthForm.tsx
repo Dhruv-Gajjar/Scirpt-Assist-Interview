@@ -1,9 +1,14 @@
-import { Button, Flex, Input, TextInput } from "@mantine/core";
+import { Button, Flex, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { FC } from "react";
 import { MdOutlineArrowRightAlt } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/auth-store";
 
 const AuthForm: FC = () => {
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+
   const authForm = useForm({
     initialValues: {
       username: "",
@@ -19,12 +24,13 @@ const AuthForm: FC = () => {
     },
   });
 
-  // const handleFormSubmit = (values: typeof authForm.values) => {
-  //   console.log(values);
-  // };
+  const handleFormSubmit = (values: typeof authForm.values) => {
+    login(values.username);
+    navigate("/", { replace: true });
+  };
 
   return (
-    <form onSubmit={authForm.onSubmit((value) => console.log(value))}>
+    <form onSubmit={authForm.onSubmit(handleFormSubmit)}>
       <Flex w={350} direction={"column"} gap={"lg"}>
         <TextInput
           withAsterisk

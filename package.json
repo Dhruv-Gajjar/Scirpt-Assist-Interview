@@ -20,6 +20,7 @@
 		"@mantine/spotlight": "^6.0.5",
 		"@tanstack/react-query": "^4.28.0",
 		"@vitejs/plugin-react": "^4.0.4",
+		"axios": "^1.7.9",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-icons": "^5.4.0",
@@ -28,7 +29,8 @@
 		"sass": "^1.64.2",
 		"spacex-api": "^1.0.2",
 		"swapi-ts": "^1.0.1",
-		"zustand": "^4.3.2"
+		"zustand": "^4.3.2",
+		"zustand-persist": "^0.4.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.2.0",
