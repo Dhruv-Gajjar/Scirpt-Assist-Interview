@@ -7,13 +7,6 @@ import {
   IVehicle,
 } from "swapi-ts";
 
-// "people": "https://swapi.dev/api/people/",
-// "planets": "https://swapi.dev/api/planets/",
-// "films": "https://swapi.dev/api/films/",
-// "species": "https://swapi.dev/api/species/",
-// "vehicles": "https://swapi.dev/api/vehicles/",
-// "starships": "https://swapi.dev/api/starships/"
-
 export interface IStarWars {
   people: IPeople;
   planets: IPlanet;
@@ -21,4 +14,26 @@ export interface IStarWars {
   speices: ISpecie;
   vehicles: IVehicle;
   starship: IStarship;
+}
+
+export enum STAR_WARS {
+  PEOPLE = "people",
+  PLANETS = "planets",
+  FILMS = "films",
+  SPECIES = "species",
+  VEHICLES = "vehicles",
+  STARSHIP = "starships",
+}
+
+export interface IStarWarsResponse {
+  results:
+    | IPeople[]
+    | IPlanet[]
+    | IFilm[]
+    | ISpecie[]
+    | IVehicle[]
+    | IStarship[];
+  count: number;
+  next: string | null;
+  previous: string | null;
 }

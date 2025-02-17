@@ -8,37 +8,38 @@ import {
 } from "swapi-ts";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
-import { IStarWars } from "../types/types";
+import { IStarWars, IStarWarsResponse } from "../types/types";
 
 interface AppStoreProps {
   starWarData: IStarWars[];
-  peoples: IPeople[];
-  planets: IPlanet[];
-  films: IFilm[];
-  species: ISpecie[];
-  vehicles: IVehicle[];
-  starShips: IStarship[];
+  peoples: IStarWarsResponse;
+  planets: IStarWarsResponse;
+  films: IStarWarsResponse;
+  species: IStarWarsResponse;
+  vehicles: IStarWarsResponse;
+  starShips: IStarWarsResponse;
 }
 
 export const useAppStore = create(
   combine(
     {
       starWarsData: [] as IStarWars[],
-      peoples: [] as IPeople[],
-      planets: [] as IPlanet[],
-      films: [] as IFilm[],
-      species: [] as ISpecie[],
-      vehicles: [] as IVehicle[],
-      starShips: [] as IStarship[],
+      peoples: {} as IStarWarsResponse,
+      planets: {} as IStarWarsResponse,
+      films: {} as IStarWarsResponse,
+      species: {} as IStarWarsResponse,
+      vehicles: {} as IStarWarsResponse,
+      starShips: {} as IStarWarsResponse,
     },
     (set) => ({
       setStarWarData: (data: IStarWars[]) => set({ starWarsData: data }),
-      setPeoplesData: (peoples: IPeople[]) => set({ peoples: peoples }),
-      setPlanetsData: (palnets: IPlanet[]) => set({ planets: palnets }),
-      setFilmsData: (films: IFilm[]) => set({ films: films }),
-      setSpeciesData: (species: ISpecie[]) => set({ species: species }),
-      setVehiclesData: (vehicles: IVehicle[]) => set({ vehicles: vehicles }),
-      setStarShipData: (starShips: IStarship[]) =>
+      setPeoplesData: (peoples: IStarWarsResponse) => set({ peoples: peoples }),
+      setPlanetsData: (palnets: IStarWarsResponse) => set({ planets: palnets }),
+      setFilmsData: (films: IStarWarsResponse) => set({ films: films }),
+      setSpeciesData: (species: IStarWarsResponse) => set({ species: species }),
+      setVehiclesData: (vehicles: IStarWarsResponse) =>
+        set({ vehicles: vehicles }),
+      setStarShipData: (starShips: IStarWarsResponse) =>
         set({ starShips: starShips }),
     })
   )
