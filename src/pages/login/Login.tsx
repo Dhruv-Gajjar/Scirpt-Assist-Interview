@@ -4,7 +4,7 @@ import AuthForm from "../../components/AuthForm";
 
 const Login: FC = () => {
   return (
-    <Center maw={"100vw"} h={"100vh"}>
+    <Center maw={"100vw"} h={"80vh"}>
       <Flex direction={"column"} gap={8}>
         <Title order={2} fw={"bold"}>
           <Text align="center">Login</Text>
