@@ -26,27 +26,20 @@ const PlanetsDetails: FC = () => {
   const { planetDetail } = useAppStore();
   const { id } = useParams();
 
-  //   const { data: homePlanetData, isLoading: planetLoading } = useQuery<IPlanet>({
-  //     queryKey: ["home_planet"],
-  //     queryFn: async (): Promise<IPlanet> => {
-  //       const data = await getHomePlanetById(planetDetail.homeworld.toString());
-  //       return data;
-  //     },
-  //   });
-
-  const { data: filmsData, isLoading: filmLoading } = useQuery({
+  const { data: filmsData, isFetching: filmLoading } = useQuery({
     queryKey: ["people_film"],
     queryFn: () => {
       const filmPromises = planetDetail.films.map(async (filmUrl) => {
         const film = await getFilmsById(filmUrl.toString());
         return film.title;
       });
-
       return Promise.all(filmPromises);
     },
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
   });
 
-  const { data: peoplesData, isLoading: peoplesLoading } = useQuery({
+  const { data: peoplesData, isFetching: peoplesLoading } = useQuery({
     queryKey: ["planets_peoples"],
     queryFn: () => {
       const peoplesPromise = planetDetail.residents.map(async (resident) => {
@@ -56,6 +49,8 @@ const PlanetsDetails: FC = () => {
 
       return Promise.all(peoplesPromise);
     },
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
   });
 
   //   const { data: vehicleData, isLoading: vehicleLoading } = useQuery({
@@ -89,11 +84,12 @@ const PlanetsDetails: FC = () => {
       <Title pb={18}>
         <Text>Planets Details</Text>
       </Title>
-      {/* {planetLoading && filmLoading && vehicleLoading && starShipLoading && (
-        <Center w="100vw" h="80vh">
-          <Loader size="xl" />
-        </Center>
-      )} */}
+      {filmLoading ||
+        (peoplesLoading && (
+          <Center w="70vw" h="60vh">
+            <Loader size="xl" />
+          </Center>
+        ))}
       <Flex direction="column" align="start" gap={6} justify="center">
         <Flex align="center" justify="start" gap={8} direction="row">
           <Text weight="bolder" size="lg">
@@ -131,7 +127,7 @@ const PlanetsDetails: FC = () => {
           <Text>Population:</Text>
           <Text transform="capitalize">{planetDetail.population}</Text>
         </Flex>
-        <Flex gap={6} wrap={"wrap"} w="100vw" align="center">
+        <Flex gap={6} wrap={"wrap"} w="auto" align="center">
           <Text>Films: </Text>
           <Flex wrap={"wrap"} gap={8} align="center" justify="center">
             {filmsData && filmsData?.length > 0 ? (

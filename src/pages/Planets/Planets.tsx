@@ -28,7 +28,7 @@ const Planets: FC = () => {
   const totalPages = Math.ceil((planets.count || 0) / 10);
   const pagination = usePagination({ total: totalPages, initialPage: 1 });
 
-  const { data: planetData, isLoading: planetsLoading } = useQuery({
+  const { data: planetData, isFetching: planetsLoading } = useQuery({
     queryKey: ["planets", pagination.active],
     queryFn: async () => {
       const baseUrl = "https://swapi.dev/api/planets/";
@@ -41,10 +41,12 @@ const Planets: FC = () => {
       return response;
     },
     keepPreviousData: true,
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
     enabled: !!pagination.active,
   });
 
-  const { isLoading: selectedPlanetLoading } = useQuery({
+  const { isFetching: selectedPlanetLoading } = useQuery({
     queryKey: ["planets", selectedPlanet],
     queryFn: async () => {
       const data: IPlanet = await getPlanetById(selectedPlanet);
@@ -55,6 +57,8 @@ const Planets: FC = () => {
       }
       return data;
     },
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
     enabled: !!selectedPlanet,
     onError: (error: any) => {
       console.error("Error fetching Star Wars data:", error);
@@ -81,8 +85,8 @@ const Planets: FC = () => {
     setSelectedPlanet(url.toString());
   };
 
-  return planetsLoading ? (
-    <Center>
+  return planetsLoading || selectedPlanetLoading ? (
+    <Center w="100vw" h="80vh">
       <Loader size="xl" />
     </Center>
   ) : (

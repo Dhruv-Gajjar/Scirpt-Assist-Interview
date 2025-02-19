@@ -2,6 +2,8 @@ import {
   Box,
   Center,
   Container,
+  Flex,
+  Input,
   Loader,
   Pagination,
   Table,
@@ -9,25 +11,24 @@ import {
   Title,
 } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
-import { QueryClient, useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ChangeEvent, FC, useMemo, useState } from "react";
+import { MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { IPeople } from "swapi-ts";
-import AppLoader from "../../components/AppLoader";
 import { getPeopleById, getStarWarsData } from "../../services/api";
 import { useAppStore } from "../../store/app.store";
 
 const People: FC = () => {
   const [selectedPeople, setSelectedPeople] = useState<string>("");
-  const [nextPage, setNextPage] = useState<string>("");
-  // const [rows, setRows] = useState<JSX.Element[]>([]);
+  const [search, setSearch] = useState<string>("");
 
   const { peoples, setPeopleDetailData, setPeoplesData } = useAppStore();
   const navigate = useNavigate();
   const totalPages = Math.ceil((peoples.count || 0) / 10);
   const pagination = usePagination({ total: totalPages, initialPage: 1 });
 
-  const { data: peoplesData, isLoading: peopleLoading } = useQuery({
+  const { data: peoplesData, isFetching: peopleLoading } = useQuery({
     queryKey: ["people", pagination.active],
     queryFn: async () => {
       const baseUrl = "https://swapi.dev/api/people/";
@@ -40,10 +41,12 @@ const People: FC = () => {
       return peopleData;
     },
     keepPreviousData: true,
+    staleTime: 0.5,
+    cacheTime: 5 * 60 * 1000,
     enabled: !!pagination.active,
   });
 
-  const { isLoading: selectedPeopleLoading } = useQuery({
+  const { isFetching: selectedPeopleLoading } = useQuery({
     queryKey: ["people", selectedPeople],
     queryFn: async () => {
       const data: IPeople = await getPeopleById(selectedPeople);
@@ -64,7 +67,18 @@ const People: FC = () => {
     setSelectedPeople(url.toString());
   };
 
-  const rows = (peoples.results as IPeople[]).map((people: IPeople, index) => (
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.currentTarget.value);
+  };
+
+  const filteredPeoples = useMemo(() => {
+    if (!search) return (peoples.results as IPeople[]) || [];
+    return (peoples.results as IPeople[]).filter((people) =>
+      people.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, peoples.results]);
+
+  const rows = (filteredPeoples as IPeople[]).map((people: IPeople, index) => (
     <tr
       style={{ cursor: "pointer" }}
       key={index}
@@ -85,47 +99,27 @@ const People: FC = () => {
     </tr>
   ));
 
-  // useEffect(() => {
-  //   if (peoples.results) {
-  //     const tableRows = (peoples.results as IPeople[]).map(
-  //       (people: IPeople, index) => (
-  //         <tr
-  //           style={{ cursor: "pointer" }}
-  //           key={index}
-  //           onClick={() => handleSelectedIndex(people.url)}
-  //         >
-  //           <td>
-  //             <Text lineClamp={1}>{people.name}</Text>
-  //           </td>
-  //           <td>
-  //             <Text lineClamp={1}>{people.gender}</Text>
-  //           </td>
-  //           <td>{people.birth_year}</td>
-  //           <td>{people.films?.length || 0}</td>
-  //           <td>{people.vehicles?.length || 0}</td>
-  //           <td>
-  //             <Text lineClamp={1}>{people.starships?.length || 0}</Text>
-  //           </td>
-  //         </tr>
-  //       )
-  //     );
-  //     setRows(tableRows);
-  //   }
-  // }, [pagination.active, peoples.results]);
-
   return (
     <>
-      {peopleLoading ? (
+      {peopleLoading || selectedPeopleLoading ? (
         <Center w="100vw" h="80vh">
           <Loader size="xl" />
         </Center>
       ) : (
         <Container pt={24}>
-          <Title>
-            <Text weight="bold" size={"lg"}>
-              Peoples
-            </Text>
-          </Title>
+          <Flex align="center" justify="space-between">
+            <Title>
+              <Text weight="bold" size={"lg"}>
+                Peoples
+              </Text>
+            </Title>
+            <Input
+              icon={<MdSearch scale={20} />}
+              placeholder="Search"
+              value={search}
+              onChange={handleSearch}
+            />
+          </Flex>
           <Table highlightOnHover>
             <thead>
               <tr>

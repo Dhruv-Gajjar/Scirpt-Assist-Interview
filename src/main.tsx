@@ -26,11 +26,7 @@ export const routes = [
     children: [
       {
         path: "/",
-        element: (
-          <AuthGuard requiredAuth={true}>
-            <Landing />
-          </AuthGuard>
-        ),
+        element: <Landing />,
       },
       {
         path: "/login",

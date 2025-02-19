@@ -101,7 +101,9 @@ const Landing: FC = () => {
                   </CardSection>
                   <Box h={100} pt={8}>
                     <Text weight={"bold"}>{element.title}</Text>
-                    <Text>{element.description}</Text>
+                    <Text color="gray.6" size="sm">
+                      {element.description}
+                    </Text>
                   </Box>
                 </Card>
               </Grid.Col>
