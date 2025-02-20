@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  Center,
-  Container,
-  Flex,
-  Tabs,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, Button, Container, Flex, Tabs, Text, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
 import { GiInterceptorShip, GiSpaceship } from "react-icons/gi";

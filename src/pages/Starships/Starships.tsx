@@ -1,6 +1,10 @@
 import {
+  Button,
   Center,
   Container,
+  Flex,
+  Input,
+  Loader,
   Pagination,
   Table,
   Text,
@@ -8,21 +12,23 @@ import {
 } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useMemo, useState } from "react";
+import { MdChevronLeft, MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { IStarship, IVehicle } from "swapi-ts";
+import { IStarship } from "swapi-ts";
 import { getStarShipsByPeopleId, getStarWarsData } from "../../services/api";
 import { useAppStore } from "../../store/app.store";
 
 const StarShips: FC = () => {
   const [selectedStarShips, setSelectedStarShips] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   const { starShips, setStarShipData, setStarShipDetailData } = useAppStore();
   const navigate = useNavigate();
   const totalPages = Math.ceil((starShips.count || 0) / 10);
   const pagination = usePagination({ total: totalPages, initialPage: 1 });
 
-  const { data: starSipsData, isLoading: starShipsLoading } = useQuery({
+  const { data: starSipsData, isFetching: starShipsLoading } = useQuery({
     queryKey: ["starships", pagination.active],
     queryFn: async () => {
       const baseUrl = "https://swapi.dev/api/starships/";
@@ -38,8 +44,8 @@ const StarShips: FC = () => {
     enabled: !!pagination.active,
   });
 
-  const { isLoading: selectedStarShipLoading } = useQuery({
-    queryKey: ["starships", selectedStarShips],
+  const { isFetching: selectedStarShipLoading } = useQuery({
+    queryKey: ["starship", selectedStarShips],
     queryFn: async () => {
       const data: IStarship = await getStarShipsByPeopleId(selectedStarShips);
       if (data) {
@@ -55,47 +61,93 @@ const StarShips: FC = () => {
     },
   });
 
-  const rows = (starShips.results as IStarship[])?.map(
+  const handleSelectedIndex = (url: string) => {
+    setSelectedStarShips(url.toString());
+  };
+
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.currentTarget.value);
+  };
+
+  const filteredStarShips = useMemo(() => {
+    if (!search) return (starShips.results as IStarship[]) || [];
+    return (starShips.results as IStarship[]).filter((starShip) =>
+      starShip.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, starShips.results]);
+
+  const rows = (filteredStarShips as IStarship[])?.map(
     (starShip: IStarship, index: number) => (
       <tr
         key={index}
         style={{ cursor: "pointer" }}
         onClick={() => handleSelectedIndex(starShip.url)}
       >
-        <td>{starShip?.name}</td>
-        <td>{starShip?.model}</td>
         <td>
-          <Text w={200}>{starShip?.manufacturer}</Text>
+          <Text lineClamp={1}>{starShip?.name}</Text>
         </td>
-        <td>{starShip?.length}</td>
         <td>
-          <Text w={100}>{starShip?.max_atmosphering_speed}</Text>
+          <Text lineClamp={1}>{starShip?.model}</Text>
         </td>
-        <td>{starShip?.starship_class}</td>
+        <td>
+          <Text lineClamp={1}>{starShip?.manufacturer}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{starShip?.length}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{starShip?.max_atmosphering_speed}</Text>
+        </td>
       </tr>
     )
   );
 
-  const handleSelectedIndex = (url: string) => {
-    setSelectedStarShips(url.toString());
-  };
-
-  return (
+  return starShipsLoading || selectedStarShipLoading ? (
+    <Center w="100vw" h="80vh">
+      <Loader size="xl" />
+    </Center>
+  ) : (
     <Container pt={24}>
-      <Title>
-        <Text weight="bold" size={"lg"}>
-          Star Ships
-        </Text>
-      </Title>
+      <Flex pb={8} justify={"end"}>
+        <Button
+          onClick={() => navigate("/")}
+          variant="outline"
+          leftIcon={<MdChevronLeft size={20} />}
+        >
+          Go Back
+        </Button>
+      </Flex>
+      <Flex align="center" justify="space-between">
+        <Title>
+          <Text weight="bold" size={"lg"}>
+            Star Ships
+          </Text>
+        </Title>
+        <Input
+          icon={<MdSearch scale={20} />}
+          placeholder="Search"
+          value={search}
+          onChange={handleSearch}
+        />
+      </Flex>
       <Table highlightOnHover>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Model</th>
-            <th>Manufacturee</th>
-            <th>Length</th>
-            <th>Max Speed</th>
-            <th>Ship Class</th>
+            <th>
+              <Text lineClamp={1}>Name</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Model</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Manufacturee</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Length</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Max Speed</Text>
+            </th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

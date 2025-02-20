@@ -1,6 +1,10 @@
 import {
+  Button,
   Center,
   Container,
+  Flex,
+  Input,
+  Loader,
   Pagination,
   Table,
   Text,
@@ -8,22 +12,24 @@ import {
 } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useMemo, useState } from "react";
+import { MdChevronLeft, MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { IPlanet, IVehicle } from "swapi-ts";
+import { IVehicle } from "swapi-ts";
 import { getStarWarsData, getVehiclesByPeopleId } from "../../services/api";
 import { useAppStore } from "../../store/app.store";
 
 const Vehicles: FC = () => {
   const [selectedVehicles, setSelectedVehicles] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   const { vehicles, setVehiclesData, setVehicleDetailData } = useAppStore();
   const navigate = useNavigate();
   const totalPages = Math.ceil((vehicles.count || 0) / 10);
   const pagination = usePagination({ total: totalPages, initialPage: 1 });
 
-  const { data: vehiclesData, isLoading: vehiclesLoading } = useQuery({
-    queryKey: ["vehicle", pagination.active],
+  const { data: vehiclesData, isFetching: vehiclesLoading } = useQuery({
+    queryKey: ["vehicles", pagination.active],
     queryFn: async () => {
       const baseUrl = "https://swapi.dev/api/vehicles/";
       const url =
@@ -35,10 +41,12 @@ const Vehicles: FC = () => {
       return response;
     },
     keepPreviousData: true,
+    staleTime: 0.5,
+    cacheTime: 5 * 60 * 1000,
     enabled: !!pagination.active,
   });
 
-  const { isLoading: selectedVehicleLoading } = useQuery({
+  const { isFetching: selectedVehicleLoading } = useQuery({
     queryKey: ["vehicle", selectedVehicles],
     queryFn: async () => {
       const data: IVehicle = await getVehiclesByPeopleId(selectedVehicles);
@@ -49,42 +57,86 @@ const Vehicles: FC = () => {
       }
       return data;
     },
+    staleTime: 0.5,
+    cacheTime: 5 * 60 * 1000,
     enabled: !!selectedVehicles,
     onError: (error: any) => {
       console.error("Error fetching Star Wars data:", error);
     },
   });
 
-  const rows = (vehicles.results as IVehicle[])?.map(
+  const handleSelectedIndex = (url: string) => {
+    setSelectedVehicles(url.toString());
+  };
+
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.currentTarget.value);
+  };
+
+  const filteredVehicles = useMemo(() => {
+    if (!search) return (vehicles.results as IVehicle[]) || [];
+    return (vehicles.results as IVehicle[]).filter((vehicle) =>
+      vehicle.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, vehicles.results]);
+
+  const rows = (filteredVehicles as IVehicle[])?.map(
     (vehicle: IVehicle, index: number) => (
       <tr
         key={index}
         style={{ cursor: "pointer" }}
         onClick={() => handleSelectedIndex(vehicle.url)}
       >
-        <td>{vehicle?.name}</td>
-        <td>{vehicle?.model}</td>
         <td>
-          <Text w={200}>{vehicle?.manufacturer}</Text>
+          <Text lineClamp={1}>{vehicle?.name}</Text>
         </td>
-        <td>{vehicle?.length}</td>
-        <td>{vehicle?.passengers}</td>
-        <td>{parseInt(vehicle?.cargo_capacity).toFixed(2)}</td>
+        <td>
+          <Text lineClamp={1}>{vehicle?.model}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{vehicle?.manufacturer}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{vehicle?.length}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{vehicle?.passengers}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{vehicle?.cargo_capacity}</Text>
+        </td>
       </tr>
     )
   );
 
-  const handleSelectedIndex = (url: string) => {
-    setSelectedVehicles(url.toString());
-  };
-
-  return (
+  return vehiclesLoading || selectedVehicleLoading ? (
+    <Center w="100vw" h="80vh">
+      <Loader size="xl" />
+    </Center>
+  ) : (
     <Container pt={24}>
-      <Title>
-        <Text weight="bold" size={"lg"}>
-          Vehicles
-        </Text>
-      </Title>
+      <Flex pb={8} justify={"end"}>
+        <Button
+          onClick={() => navigate("/")}
+          variant="outline"
+          leftIcon={<MdChevronLeft size={20} />}
+        >
+          Go Back
+        </Button>
+      </Flex>
+      <Flex align="center" justify="space-between">
+        <Title>
+          <Text weight="bold" size={"lg"}>
+            Vehicles
+          </Text>
+        </Title>
+        <Input
+          icon={<MdSearch scale={20} />}
+          placeholder="Search"
+          value={search}
+          onChange={handleSearch}
+        />
+      </Flex>
       <Table highlightOnHover>
         <thead>
           <tr>
