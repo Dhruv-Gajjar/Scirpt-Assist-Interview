@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Paper, Text } from "@mantine/core";
 import { FC, ReactNode } from "react";
 import { MdLogout } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/auth-store";
 
 interface AppNavbarProps {
@@ -10,16 +10,20 @@ interface AppNavbarProps {
 
 const AppNavbar: FC = () => {
   const { logout } = useAuthStore();
+  const navigate = useNavigate();
 
   return (
     <Box maw="100vw">
       <Paper bg="gray.3" shadow="xl" radius={0}>
         <Flex align="center" justify="space-between" p={12}>
-          <Link to={"/"}>
-            <Text fw="bold" size={28}>
-              StarWars
-            </Text>
-          </Link>
+          <Text
+            fw="bold"
+            size={28}
+            onClick={() => navigate("/")}
+            style={{ cursor: "pointer" }}
+          >
+            StarWars
+          </Text>
           <Button onClick={logout} rightIcon={<MdLogout size={20} />}>
             Logout
           </Button>
