@@ -13,10 +13,7 @@ const useAuthStore = create(
       isLoggedIn: false,
       username: null,
       login: (username: string) => {
-        // const userLocalStorage = sessionStorage.getItem("accessToken");
-        // if (userLocalStorage) {
         set({ isLoggedIn: true, username });
-        // }
       },
       logout: () => {
         set({ isLoggedIn: false, username: null });
