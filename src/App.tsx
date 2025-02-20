@@ -12,7 +12,7 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-  console.log("pathName: ", pathname);
+
   return (
     <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
       {pathname !== "/login" && <StarWarNav />}
