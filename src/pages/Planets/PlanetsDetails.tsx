@@ -1,18 +1,7 @@
-import {
-  Box,
-  Button,
-  Card,
-  Center,
-  Container,
-  Flex,
-  Loader,
-  Tabs,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, Button, Container, Flex, Tabs, Text, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
-import { IoMdFilm, IoMdPerson } from "react-icons/io";
+import { IoMdFilm, IoMdPeople, IoMdPlanet } from "react-icons/io";
 import { MdChevronLeft } from "react-icons/md";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FilmDataCard from "../../components/FilmDataCard";
@@ -77,14 +66,14 @@ const PlanetsDetails: FC = () => {
       </Flex>
       <Tabs defaultValue={activeTab} onTabChange={handleTabChange}>
         <Tabs.List>
-          <Tabs.Tab value="info" icon={<IoMdPerson size={22} />}>
+          <Tabs.Tab value="info" icon={<IoMdPlanet size={22} />}>
             <Text>Info</Text>
           </Tabs.Tab>
           <Tabs.Tab value="films" icon={<IoMdFilm size={22} />}>
             Films
           </Tabs.Tab>
 
-          <Tabs.Tab value="residents" icon={<IoMdFilm size={22} />}>
+          <Tabs.Tab value="residents" icon={<IoMdPeople size={22} />}>
             Residents
           </Tabs.Tab>
         </Tabs.List>

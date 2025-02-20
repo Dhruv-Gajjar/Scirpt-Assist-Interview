@@ -7,7 +7,7 @@ interface AppNavbarProps {
   children: ReactNode;
 }
 
-const AppNavbar: FC<AppNavbarProps> = ({ children }) => {
+const AppNavbar: FC = () => {
   const { logout } = useAuthStore();
 
   return (
@@ -22,7 +22,6 @@ const AppNavbar: FC<AppNavbarProps> = ({ children }) => {
           </Button>
         </Flex>
       </Paper>
-      {children}
     </Box>
   );
 };

@@ -8,17 +8,15 @@ import { theme } from "./theme";
 
 export default function App() {
   const { pathname } = useLocation();
-  const { isLoggedIn } = useAuthStore();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
+  console.log("pathName: ", pathname);
   return (
     <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
-      <StarWarNav>
-        <Outlet />
-      </StarWarNav>
+      {pathname !== "/login" && <StarWarNav />}
+      <Outlet />
     </MantineProvider>
   );
 }
