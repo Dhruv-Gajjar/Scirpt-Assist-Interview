@@ -1,4 +1,5 @@
 import {
+  Button,
   Center,
   Container,
   Flex,
@@ -12,7 +13,7 @@ import {
 import { usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { ChangeEvent, FC, useMemo, useState } from "react";
-import { MdSearch } from "react-icons/md";
+import { MdChevronLeft, MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { IPeople } from "swapi-ts";
 import { getPeopleById, getStarWarsData } from "../../services/api";
@@ -112,6 +113,15 @@ const People: FC = () => {
         </Center>
       ) : (
         <Container pt={24}>
+          <Flex pb={8} justify={"end"}>
+            <Button
+              onClick={() => navigate("/")}
+              variant="outline"
+              leftIcon={<MdChevronLeft size={20} />}
+            >
+              Go Back
+            </Button>
+          </Flex>
           <Flex align="center" justify="space-between">
             <Title>
               <Text weight="bold" size={"lg"}>

@@ -15,13 +15,15 @@ import { GiInterceptorShip, GiSpaceship } from "react-icons/gi";
 import { IoMdFilm, IoMdPerson, IoMdPlanet } from "react-icons/io";
 import { MdChevronLeft } from "react-icons/md";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IPlanet, IStarship, IVehicle } from "swapi-ts";
+import { IPlanet, ISpecie, IStarship, IVehicle } from "swapi-ts";
 import FilmDataCard from "../../components/FilmDataCard";
+import SpeciesDataCard from "../../components/SpeciesDataCard";
 import StarShipsDataCard from "../../components/StarShipsDataCard";
 import VehiclesDataCard from "../../components/VehiclesCard";
 import {
   getFilmsById,
   getHomePlanetById,
+  getSpeciesById,
   getStarShipsByPeopleId,
   getVehiclesByPeopleId,
 } from "../../services/api";
@@ -54,6 +56,20 @@ const PeopleDetails: FC = () => {
       });
 
       return Promise.all(filmPromises);
+    },
+    staleTime: 0.5,
+    cacheTime: 5 * 60 * 1000,
+  });
+
+  const { data: speciesData, isFetching: speciesLoading } = useQuery({
+    queryKey: ["people_species"],
+    queryFn: () => {
+      const speciesPromise = peopleDetail.species.map(async (speciesUrl) => {
+        const species: ISpecie = await getSpeciesById(speciesUrl.toString());
+        return species;
+      });
+
+      return Promise.all(speciesPromise);
     },
     staleTime: 0.5,
     cacheTime: 5 * 60 * 1000,
@@ -122,6 +138,9 @@ const PeopleDetails: FC = () => {
           </Tabs.Tab>
           <Tabs.Tab value="homeworld" icon={<IoMdPlanet size={22} />}>
             HomeWorld
+          </Tabs.Tab>
+          <Tabs.Tab value="species" icon={<IoMdPlanet size={22} />}>
+            Species
           </Tabs.Tab>
           <Tabs.Tab value="films" icon={<IoMdFilm size={22} />}>
             Films
@@ -290,6 +309,18 @@ const PeopleDetails: FC = () => {
                 {homePlanetData?.surface_water}
               </Text>
             </Flex>
+          </Box>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="species" pt="xs">
+          <Box pt={12}>
+            <Title pb={12} fz={{ base: "md", lg: "xl" }}>
+              <Text>Species Info</Text>
+            </Title>
+            <SpeciesDataCard
+              isSpeciesDataLoading={speciesLoading}
+              speciesData={speciesData}
+            />
           </Box>
         </Tabs.Panel>
 

@@ -94,40 +94,84 @@ const PlanetsDetails: FC = () => {
             <Title pb={12} fz={{ base: "md", lg: "xl" }}>
               <Text>Planet Info</Text>
             </Title>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text weight="bolder" size="lg">
-                Name:
-              </Text>
-              <Text weight="bolder" size="lg" transform="capitalize">
-                {planetDetail.name}
-              </Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Name:</Text>
+              <Text transform="capitalize">{planetDetail.name}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Climate:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Climate:</Text>
               <Text transform="capitalize">{planetDetail.climate}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Diameter:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Diameter:</Text>
               <Text transform="capitalize">{planetDetail.diameter}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Gravity:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Gravity:</Text>
               <Text transform="capitalize">{planetDetail.gravity}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Orbital Period:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Orbital Period:</Text>
               <Text transform="capitalize">{planetDetail.orbital_period}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Terrain:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Terrain:</Text>
               <Text transform="capitalize">{planetDetail.terrain} kg</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Rotation Period:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Rotation Period:</Text>
               <Text transform="capitalize">{planetDetail.rotation_period}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
-              <Text>Population:</Text>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
+              <Text weight="bold">Population:</Text>
               <Text transform="capitalize">{planetDetail.population}</Text>
             </Flex>
           </Box>

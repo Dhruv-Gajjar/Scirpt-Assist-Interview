@@ -1,5 +1,5 @@
 import {
-  Box,
+  Button,
   Center,
   Container,
   Flex,
@@ -13,14 +13,10 @@ import {
 import { usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { ChangeEvent, FC, useMemo, useState } from "react";
-import { MdSearch } from "react-icons/md";
+import { MdChevronLeft, MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { IPeople, IPlanet } from "swapi-ts";
-import {
-  getPeopleById,
-  getPlanetById,
-  getStarWarsData,
-} from "../../services/api";
+import { IPlanet } from "swapi-ts";
+import { getPlanetById, getStarWarsData } from "../../services/api";
 import { useAppStore } from "../../store/app.store";
 
 const Planets: FC = () => {
@@ -78,7 +74,7 @@ const Planets: FC = () => {
   };
 
   const filteredPlanets = useMemo(() => {
-    if (!search) return (planets.results as IPeople[]) || [];
+    if (!search) return (planets.results as IPlanet[]) || [];
     return (planets.results as IPlanet[]).filter((planet) =>
       planet.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -119,6 +115,15 @@ const Planets: FC = () => {
     </Center>
   ) : (
     <Container pt={24}>
+      <Flex pb={8} justify={"end"}>
+        <Button
+          onClick={() => navigate("/")}
+          variant="outline"
+          leftIcon={<MdChevronLeft size={20} />}
+        >
+          Go Back
+        </Button>
+      </Flex>
       <Flex align="center" justify="space-between">
         <Title>
           <Text weight="bold" size={"lg"}>

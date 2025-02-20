@@ -1,6 +1,10 @@
 import {
+  Button,
   Center,
   Container,
+  Flex,
+  Input,
+  Loader,
   Pagination,
   Table,
   Text,
@@ -8,22 +12,41 @@ import {
 } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useMemo, useState } from "react";
+import { MdChevronLeft, MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { IFilm } from "swapi-ts";
-import { getFilmsById } from "../../services/api";
+import { getFilmsById, getStarWarsData } from "../../services/api";
 import { useAppStore } from "../../store/app.store";
 
 const Films: FC = () => {
   const [selectedFilm, setSelectedFilm] = useState<string>("");
-  // const [rows, setRows] = useState<JSX.Element[]>();
+  const [search, setSearch] = useState<string>("");
 
   const { films, setFilmsData, setFilmDetailData } = useAppStore();
   const navigate = useNavigate();
   const totalPages = Math.ceil((films.count || 0) / 10);
   const pagination = usePagination({ total: totalPages, initialPage: 1 });
 
-  const { isLoading: selectedFilmLoading } = useQuery({
+  const { data: filmsData, isFetching: filmsLoading } = useQuery({
+    queryKey: ["films", pagination.active],
+    queryFn: async () => {
+      const baseUrl = "https://swapi.dev/api/films/";
+      const url =
+        pagination.active === 1
+          ? baseUrl
+          : `${baseUrl}?page=${pagination.active}`;
+      const response = await getStarWarsData(url);
+      setFilmsData(response);
+      return response;
+    },
+    keepPreviousData: true,
+    staleTime: 0.5,
+    cacheTime: 5 * 60 * 1000,
+    enabled: !!pagination.active,
+  });
+
+  const { isFetching: selectedFilmLoading } = useQuery({
     queryKey: ["film", selectedFilm],
     queryFn: async () => {
       const data: IFilm = await getFilmsById(selectedFilm);
@@ -35,73 +58,100 @@ const Films: FC = () => {
       return data;
     },
     enabled: !!selectedFilm,
+    staleTime: 0.5,
+    cacheTime: 5 * 60 * 1000,
     onError: (error: any) => {
       console.error("Error fetching Star Wars data:", error);
     },
   });
 
-  const rows = (films.results as IFilm[])?.map((film: IFilm, index: number) => (
-    <tr
-      key={index}
-      style={{ cursor: "pointer" }}
-      onClick={() => handleSelectedIndex(film.url)}
-    >
-      <td>{film?.title}</td>
-      <td>{film?.director}</td>
-      <td>
-        <Text w={120}>{film?.producer}</Text>
-      </td>
-      <td>
-        <Text w={200} lineClamp={2}>
-          {film?.opening_crawl}
-        </Text>
-      </td>
-      <td>{film?.release_date.toString()}</td>
-    </tr>
-  ));
-
-  // useEffect(() => {
-  //   if (films.results) {
-  //     const tableRows = (films.results as IFilm[])?.map(
-  //       (film: IFilm, index: number) => (
-  //         <tr key={index}>
-  //           <td>{film?.title}</td>
-  //           <td>{film?.director}</td>
-  //           <td>
-  //             <Text w={120}>{film?.producer}</Text>
-  //           </td>
-  //           <td>
-  //             <Text w={200} lineClamp={2}>
-  //               {film?.opening_crawl}
-  //             </Text>
-  //           </td>
-  //           <td>{film?.release_date.toString()}</td>
-  //         </tr>
-  //       )
-  //     );
-  //     setRows(tableRows);
-  //   }
-  // }, [films.results]);
-
   const handleSelectedIndex = (url: string) => {
     setSelectedFilm(url.toString());
   };
 
-  return (
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.currentTarget.value);
+  };
+
+  const filteredPlanets = useMemo(() => {
+    if (!search) return (films.results as IFilm[]) || [];
+    return (films.results as IFilm[]).filter((film) =>
+      film.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, films.results]);
+
+  const rows = (filteredPlanets as IFilm[])?.map(
+    (film: IFilm, index: number) => (
+      <tr
+        key={index}
+        style={{ cursor: "pointer" }}
+        onClick={() => handleSelectedIndex(film.url)}
+      >
+        <td>
+          <Text lineClamp={1}>{film?.title}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{film?.director}</Text>
+        </td>
+        <td width={180}>
+          <Text lineClamp={1}>{film?.producer}</Text>
+        </td>
+        <td width={180}>
+          <Text lineClamp={2}>{film?.opening_crawl}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{film?.release_date.toString()}</Text>
+        </td>
+      </tr>
+    )
+  );
+
+  return filmsLoading || selectedFilmLoading ? (
+    <Center w="100vw" h="80vh">
+      <Loader size="xl" />
+    </Center>
+  ) : (
     <Container pt={24}>
-      <Title>
-        <Text weight="bold" size={"lg"}>
-          Films
-        </Text>
-      </Title>
+      <Flex pb={8} justify={"end"}>
+        <Button
+          onClick={() => navigate("/")}
+          variant="outline"
+          leftIcon={<MdChevronLeft size={20} />}
+        >
+          Go Back
+        </Button>
+      </Flex>
+      <Flex align="center" justify="space-between">
+        <Title>
+          <Text weight="bold" size={"lg"}>
+            Films
+          </Text>
+        </Title>
+        <Input
+          icon={<MdSearch scale={20} />}
+          placeholder="Search"
+          value={search}
+          onChange={handleSearch}
+        />
+      </Flex>
       <Table highlightOnHover>
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Director</th>
-            <th>Producer</th>
-            <th>Opening Crawl</th>
-            <th>Release Date</th>
+            <th>
+              <Text lineClamp={1}>Title</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Director</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Producer</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Opening Crawl</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Release Date</Text>
+            </th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
