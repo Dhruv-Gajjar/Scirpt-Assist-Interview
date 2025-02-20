@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   Center,
   Container,
@@ -9,11 +10,12 @@ import {
   Title,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { GiInterceptorShip, GiSpaceship } from "react-icons/gi";
 import { IoMdFilm, IoMdPerson, IoMdPlanet } from "react-icons/io";
-import { useParams, useSearchParams } from "react-router-dom";
-import { IPlanet, IVehicle } from "swapi-ts";
+import { MdChevronLeft } from "react-icons/md";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { IPlanet, IStarship, IVehicle } from "swapi-ts";
 import FilmDataCard from "../../components/FilmDataCard";
 import StarShipsDataCard from "../../components/StarShipsDataCard";
 import VehiclesDataCard from "../../components/VehiclesCard";
@@ -24,13 +26,10 @@ import {
   getVehiclesByPeopleId,
 } from "../../services/api";
 import { useAppStore } from "../../store/app.store";
-import { theme } from "../../theme";
 
 const PeopleDetails: FC = () => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-
   const { peopleDetail } = useAppStore();
-  const params = useParams();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "info";
 
@@ -77,11 +76,13 @@ const PeopleDetails: FC = () => {
   });
 
   const { data: starShipData, isFetching: starShipLoading } = useQuery({
-    queryKey: ["people_vehicles"],
+    queryKey: ["people_star_Ships"],
     queryFn: () => {
       const starShipPromise = peopleDetail.starships.map(
         async (starShipUrl) => {
-          const starShip = await getStarShipsByPeopleId(starShipUrl.toString());
+          const starShip: IStarship = await getStarShipsByPeopleId(
+            starShipUrl.toString()
+          );
           return starShip;
         }
       );
@@ -98,9 +99,22 @@ const PeopleDetails: FC = () => {
 
   return (
     <Container pt={24}>
-      <Title pb={18}>
-        <Text>People Details</Text>
-      </Title>
+      <Flex
+        align={{ base: "center" }}
+        justify={{ base: "space-between" }}
+        direction={{ base: "row" }}
+      >
+        <Title pt={16} fz={{ base: "md", lg: "xl" }} pb={18}>
+          <Text>People Details</Text>
+        </Title>
+        <Button
+          onClick={() => navigate("/people")}
+          variant="outline"
+          leftIcon={<MdChevronLeft size={20} />}
+        >
+          Go Back
+        </Button>
+      </Flex>
       <Tabs defaultValue={activeTab} onTabChange={handleTabChange}>
         <Tabs.List>
           <Tabs.Tab value="info" icon={<IoMdPerson size={22} />}>
@@ -122,38 +136,86 @@ const PeopleDetails: FC = () => {
 
         <Tabs.Panel value="info" pt="xs">
           <Box pt={12}>
-            <Title>
-              <Text>Personal Information</Text>
+            <Title pb={12} fz={{ base: "md", lg: "xl" }}>
+              <Text>Personal Info</Text>
             </Title>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Name:</Text>
               <Text transform="capitalize">{peopleDetail.name}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Birth Year:</Text>
               <Text transform="capitalize">{peopleDetail.birth_year}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Gender:</Text>
               <Text transform="capitalize">{peopleDetail.gender}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Height:</Text>
               <Text transform="capitalize">{peopleDetail.height}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Hair Color:</Text>
               <Text transform="capitalize">{peopleDetail.hair_color}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Mass:</Text>
               <Text transform="capitalize">{peopleDetail.mass} kg</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Skin Color:</Text>
               <Text transform="capitalize">{peopleDetail.skin_color}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Eye Color:</Text>
               <Text transform="capitalize">{peopleDetail.eye_color}</Text>
             </Flex>
@@ -162,30 +224,67 @@ const PeopleDetails: FC = () => {
 
         <Tabs.Panel value="homeworld" pt="xs">
           <Box pt={12}>
-            <Title>
+            <Title pb={12} fz={{ base: "md", lg: "xl" }}>
               <Text>Homeworld Info</Text>
             </Title>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Name:</Text>
               <Text transform="capitalize">{homePlanetData?.name}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Climate:</Text>
               <Text transform="capitalize">{homePlanetData?.climate}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Diameter:</Text>
               <Text transform="capitalize">{homePlanetData?.diameter}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Gravity:</Text>
               <Text transform="capitalize">{homePlanetData?.gravity}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row">
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+            >
               <Text weight="bold">Population:</Text>
               <Text transform="capitalize">{homePlanetData?.population}</Text>
             </Flex>
-            <Flex align="center" justify="start" gap={8} direction="row" pb={8}>
+            <Flex
+              fz={{ base: "sm", lg: "lg" }}
+              align="center"
+              justify="start"
+              gap={8}
+              direction="row"
+              pb={8}
+            >
               <Text weight="bold">Surface Water:</Text>
               <Text transform="capitalize">
                 {homePlanetData?.surface_water}
@@ -196,28 +295,37 @@ const PeopleDetails: FC = () => {
 
         <Tabs.Panel value="films" pt="xs">
           <Box pt={12}>
-            <Title>
+            <Title pb={12} fz={{ base: "md", lg: "xl" }}>
               <Text>Film Info</Text>
             </Title>
-            <FilmDataCard filmsData={filmsData} />
+            <FilmDataCard
+              isFilmDataLoading={filmLoading}
+              filmsData={filmsData}
+            />
           </Box>
         </Tabs.Panel>
 
         <Tabs.Panel value="vehicles" pt="xs">
           <Box pt={12}>
-            <Title>
+            <Title pb={12} fz={{ base: "md", lg: "xl" }}>
               <Text>Vehicle Info</Text>
             </Title>
-            <VehiclesDataCard vehicleData={vehicleData} />
+            <VehiclesDataCard
+              isVehicleDataLoading={vehicleLoading}
+              vehicleData={vehicleData}
+            />
           </Box>
         </Tabs.Panel>
 
         <Tabs.Panel value="starships" pt="xs">
           <Box pt={12}>
-            <Title>
+            <Title pb={12} fz={{ base: "md", lg: "xl" }}>
               <Text>Star Ships Info</Text>
             </Title>
-            <StarShipsDataCard starShipData={starShipData} />
+            <StarShipsDataCard
+              isStarShipDataLoading={starShipLoading}
+              starShipData={starShipData}
+            />
           </Box>
         </Tabs.Panel>
       </Tabs>

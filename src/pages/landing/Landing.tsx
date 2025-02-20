@@ -81,13 +81,13 @@ const Landing: FC = () => {
         <Container pt={24}>
           <Grid>
             {starWarsCardData.map((element) => (
-              <Grid.Col span={4} key={element.id}>
+              <Grid.Col sm={6} lg={4} key={element.id}>
                 <Card
                   shadow="md"
                   padding="lg"
                   radius="md"
                   withBorder
-                  h={320}
+                  h={300}
                   style={{ cursor: "pointer" }}
                   onClick={() => handleLinkClick(element.link)}
                 >

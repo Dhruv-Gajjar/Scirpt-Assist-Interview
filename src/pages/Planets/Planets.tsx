@@ -2,6 +2,8 @@ import {
   Box,
   Center,
   Container,
+  Flex,
+  Input,
   Loader,
   Pagination,
   Table,
@@ -10,7 +12,8 @@ import {
 } from "@mantine/core";
 import { usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
+import { ChangeEvent, FC, useMemo, useState } from "react";
+import { MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { IPeople, IPlanet } from "swapi-ts";
 import {
@@ -22,6 +25,7 @@ import { useAppStore } from "../../store/app.store";
 
 const Planets: FC = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   const { planets, setPlanetsData, setPlanetDetailData } = useAppStore();
   const navigate = useNavigate();
@@ -41,7 +45,7 @@ const Planets: FC = () => {
       return response;
     },
     keepPreviousData: true,
-    staleTime: 0,
+    staleTime: 0.5,
     cacheTime: 5 * 60 * 1000,
     enabled: !!pagination.active,
   });
@@ -57,7 +61,7 @@ const Planets: FC = () => {
       }
       return data;
     },
-    staleTime: 0,
+    staleTime: 0.5,
     cacheTime: 5 * 60 * 1000,
     enabled: !!selectedPlanet,
     onError: (error: any) => {
@@ -65,25 +69,49 @@ const Planets: FC = () => {
     },
   });
 
-  const rows = (planets.results as IPlanet[])?.map(
+  const handleSelectedIndex = (url: string) => {
+    setSelectedPlanet(url.toString());
+  };
+
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.currentTarget.value);
+  };
+
+  const filteredPlanets = useMemo(() => {
+    if (!search) return (planets.results as IPeople[]) || [];
+    return (planets.results as IPlanet[]).filter((planet) =>
+      planet.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, planets.results]);
+
+  const rows = (filteredPlanets as IPlanet[])?.map(
     (planet: IPlanet, index: number) => (
       <tr
         key={index}
         style={{ cursor: "pointer" }}
         onClick={() => handleSelectedIndex(planet.url)}
       >
-        <td>{planet?.name}</td>
-        <td>{planet?.diameter}</td>
-        <td>{planet?.climate}</td>
-        <td>{planet?.gravity}</td>
-        <td>{planet?.films?.length}</td>
+        <td>
+          <Text lineClamp={1}>{planet?.name}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{planet?.diameter}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{planet?.climate}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{planet?.gravity}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{planet?.films?.length}</Text>
+        </td>
+        <td>
+          <Text lineClamp={1}>{planet?.residents?.length}</Text>
+        </td>
       </tr>
     )
   );
-
-  const handleSelectedIndex = (url: string) => {
-    setSelectedPlanet(url.toString());
-  };
 
   return planetsLoading || selectedPlanetLoading ? (
     <Center w="100vw" h="80vh">
@@ -91,19 +119,40 @@ const Planets: FC = () => {
     </Center>
   ) : (
     <Container pt={24}>
-      <Title>
-        <Text weight="bold" size={"lg"}>
-          Planets
-        </Text>
-      </Title>
+      <Flex align="center" justify="space-between">
+        <Title>
+          <Text weight="bold" size={"lg"}>
+            Planets
+          </Text>
+        </Title>
+        <Input
+          icon={<MdSearch scale={20} />}
+          placeholder="Search"
+          value={search}
+          onChange={handleSearch}
+        />
+      </Flex>
       <Table highlightOnHover>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Diameter</th>
-            <th>Climate</th>
-            <th>Gravity</th>
-            <th>Total Films</th>
+            <th>
+              <Text lineClamp={1}>Name</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Diameter</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Climate</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Gravity</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Total Films</Text>
+            </th>
+            <th>
+              <Text lineClamp={1}>Total Residents</Text>
+            </th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

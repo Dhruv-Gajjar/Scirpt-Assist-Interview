@@ -1,5 +1,4 @@
 import {
-  Box,
   Center,
   Container,
   Flex,
@@ -90,9 +89,15 @@ const People: FC = () => {
       <td>
         <Text lineClamp={1}>{people.gender}</Text>
       </td>
-      <td>{people.birth_year}</td>
-      <td>{people.films?.length || 0}</td>
-      <td>{people.vehicles?.length || 0}</td>
+      <td>
+        <Text lineClamp={1}>{people.birth_year}</Text>
+      </td>
+      <td>
+        <Text lineClamp={1}>{people.films?.length || 0}</Text>
+      </td>
+      <td>
+        <Text lineClamp={1}>{people.vehicles?.length || 0}</Text>
+      </td>
       <td>
         <Text lineClamp={1}>{people.starships?.length || 0}</Text>
       </td>
@@ -123,12 +128,24 @@ const People: FC = () => {
           <Table highlightOnHover>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Birth Year</th>
-                <th>Total Films</th>
-                <th>Total Vehicles</th>
-                <th>Total Starship</th>
+                <th>
+                  <Text lineClamp={1}>Name</Text>
+                </th>
+                <th>
+                  <Text lineClamp={1}>Gender</Text>
+                </th>
+                <th>
+                  <Text lineClamp={1}>Birth Year</Text>
+                </th>
+                <th>
+                  <Text lineClamp={1}>Total Films</Text>
+                </th>
+                <th>
+                  <Text lineClamp={1}>Total Vehicles</Text>
+                </th>
+                <th>
+                  <Text lineClamp={1}>Total Starship</Text>
+                </th>
               </tr>
             </thead>
             <tbody>{rows}</tbody>

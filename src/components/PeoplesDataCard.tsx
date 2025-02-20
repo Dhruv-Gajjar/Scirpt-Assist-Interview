@@ -1,19 +1,18 @@
 import { Card, Center, Flex, Loader, Text } from "@mantine/core";
 import { FC } from "react";
-import { IStarship, IVehicle } from "swapi-ts";
-import { IFilm } from "swapi-ts/src/SWApi";
+import { IPeople } from "swapi-ts";
 import { theme } from "../theme";
 
-interface StarShipsDataCardProps {
-  starShipData: IStarship[] | undefined;
-  isStarShipDataLoading: boolean;
+interface PeoplesDataCardProps {
+  peoplesData: IPeople[] | undefined;
+  ispeoplesDataLoading: boolean;
 }
 
-const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
-  starShipData,
-  isStarShipDataLoading,
+const PeoplesDataCard: FC<PeoplesDataCardProps> = ({
+  peoplesData,
+  ispeoplesDataLoading,
 }) => {
-  return isStarShipDataLoading ? (
+  return ispeoplesDataLoading ? (
     <Center w="60vw" h="40vh">
       <Loader size={"xl"} />
     </Center>
@@ -24,8 +23,8 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
       align="center"
       wrap={"wrap"}
     >
-      {starShipData && starShipData.length > 0 ? (
-        starShipData?.map((starship, index) => (
+      {peoplesData && peoplesData.length > 0 ? (
+        peoplesData?.map((people, index) => (
           <Card
             key={index}
             shadow={`${theme.shadows?.lg}`}
@@ -45,12 +44,12 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
                 transform="capitalize"
                 lineClamp={1}
               >
-                {starship.name}
+                {people.name}
               </Text>
             </Flex>
             <Flex align="center" justify="start" gap={12} direction="row">
               <Text weight="bold" size="sm">
-                Model:
+                Height:
               </Text>
               <Text
                 color="gray.7"
@@ -58,12 +57,12 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
                 transform="capitalize"
                 lineClamp={1}
               >
-                {starship?.model}
+                {people?.height}
               </Text>
             </Flex>
             <Flex align="center" justify="start" gap={12} direction="row">
               <Text weight="bold" size="sm">
-                Manufacturer:
+                Mass:
               </Text>
               <Text
                 color="gray.7"
@@ -71,12 +70,12 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
                 transform="capitalize"
                 lineClamp={1}
               >
-                {starship?.manufacturer}
+                {people?.mass}
               </Text>
             </Flex>
             <Flex align="center" justify="start" gap={12} direction="row">
               <Text weight="bold" size="sm">
-                Cost:
+                Gender:
               </Text>
               <Text
                 color="gray.7"
@@ -84,12 +83,12 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
                 transform="capitalize"
                 lineClamp={1}
               >
-                {starship?.cost_in_credits}
+                {people?.gender}
               </Text>
             </Flex>
             <Flex align="center" justify="start" gap={12} direction="row">
               <Text weight="bold" size="sm">
-                Passenger:
+                Hair Color:
               </Text>
               <Text
                 color="gray.7"
@@ -97,12 +96,12 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
                 transform="capitalize"
                 lineClamp={1}
               >
-                {starship?.passengers}
+                {people?.hair_color}
               </Text>
             </Flex>
             <Flex align="center" justify="start" gap={12} direction="row">
               <Text weight="bold" size="sm">
-                Max Speed:
+                Skin Color:
               </Text>
               <Text
                 color="gray.7"
@@ -110,7 +109,7 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
                 transform="capitalize"
                 lineClamp={1}
               >
-                {starship?.max_atmosphering_speed}
+                {people?.skin_color}
               </Text>
             </Flex>
           </Card>
@@ -124,4 +123,4 @@ const StarShipsDataCard: FC<StarShipsDataCardProps> = ({
   );
 };
 
-export default StarShipsDataCard;
+export default PeoplesDataCard;
